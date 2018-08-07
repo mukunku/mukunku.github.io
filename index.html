@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<title>MATR 2018 - Structured Team Demo Session</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/w3.css">
+<link rel="stylesheet" href="assets/montserrat.css">
+<link rel="stylesheet" href="assets/font-awesome.min.css">
+<style>
+body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
+.w3-row-padding img {margin-bottom: 12px}
+/* Set the width of the sidebar to 120px */
+.w3-sidebar {width: 120px;background: #222;}
+/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
+#main {margin-left: 120px}
+/* Remove margins from "page content" on small screens */
+@media only screen and (max-width: 600px) {#main {margin-left: 0}}
+.img-center {display: block;margin: 0 auto;} .code-block {height:300px; overflow-y:scroll;border:1px solid white; margin:0 0;overflow-x:hidden;border-radius: 12px 0 0 12px;}
+::-webkit-scrollbar {
+    width: 1em;
+}
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+</style>
+<script>
+function selectText(element) {
+    if (document.selection) { // IE
+        var range = document.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+    } else if (window.getSelection) {
+        var range = document.createRange();
+        range.selectNode(element);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+    }
+}
+</script>
+<body class="w3-black">
+
+<!-- Icon Bar (Sidebar - hidden on small screens) -->
+<nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
+  <!-- Avatar image in top left corner -->
+  <img src="assets/logo.jpg" style="width:100%">
+  <a href="#intro" class="w3-bar-item w3-button w3-padding-large w3-black">
+    <i class="fa fa-home w3-xxlarge"></i>
+    <p>INTRO</p>
+  </a>
+  <a href="#crawler" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-internet-explorer w3-xxlarge"></i>
+    <p>CRAWLER</p>
+  </a>
+  <a href="#photos" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-eye w3-xxlarge"></i>
+    <p>PHOTOS</p>
+  </a>
+  <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-envelope w3-xxlarge"></i>
+    <p>CONTACT</p>
+  </a>
+</nav>
+
+<!-- Navbar on small screens (Hidden on medium and large screens) -->
+<div class="w3-top w3-hide-large w3-hide-medium" id="myNavbar">
+  <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
+    <a href="#intro" class="w3-bar-item w3-button" style="width:25% !important">INTRO</a>
+    <a href="#crawler" class="w3-bar-item w3-button" style="width:25% !important">CRAWLER</a>
+    <a href="#photos" class="w3-bar-item w3-button" style="width:25% !important">PHOTOS</a>
+    <a href="#contact" class="w3-bar-item w3-button" style="width:25% !important">CONTACT</a>
+  </div>
+</div>
+
+<!-- Page Content -->
+<div class="w3-padding-large" id="main">
+  <!-- Header/Home -->
+  <header class="w3-container w3-padding-32 w3-center w3-black" id="home">
+    <h1 class="w3-jumbo"><span class="w3-hide-small">MATR 2018 -</span> Structured Data Team Intro Session</h1>
+    <p>A simplified look into what we do</p>
+    <img src="assets/wtc7.jpg" alt="wtc" class="w3-image" style="margin-top:50px;">
+  </header>
+
+  <!-- Intro Section -->
+  <div class="w3-content w3-justify w3-text-grey w3-padding-64" id="intro">
+    <h2 class="w3-text-light-grey">Intro</h2>
+    <hr style="width:200px" class="w3-opacity">
+    <p>Today we will be developing a simple application workflow to showcase how structured performance data is gathered, loaded, analyzed and finally delivered/utilized. While this workflow is not all we do as the Structured Data Team, it is our bread and butter. Even though today's example workflow is a simplified version of our production process, at the core, this is essentially what we do.
+    </p>
+	<img src="assets/flow_main.png" alt="flow_main" class="w3-image img-center" style="margin:50px auto;">
+	<h3 class="w3-padding-16 w3-text-light-grey">Setup</h3>
+	<p>We will be using C# as our programming language and Microsoft SQL Server as our database to achieve the workflow shown above. To get started make sure your local Sql Server instance is running: Win+R -> Type: "services.msc" & Hit Enter -> Find "Sql Server" and make sure it's running.
+    </p>
+	<p>Next open Visual Studio and create a new Console Application project. Let's name it "CMBS_Demo"
+    </p>
+	<div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+        <img src="assets/newproject.jpg" style="width:100%">
+		</div>
+		 <div class="w3-half">
+        <img src="assets/consoleapp.jpg" style="width:100%">
+      </div>
+	</div>
+	<p>Finally, copy the code-block below and replace all the code within your Program.cs file. Make sure your project builds afterwards.
+    </p>
+	<div class="code-block" onclick="selectText(this)">
+<pre style='color:#d1d1d1;background:#000000;'><span style='color:#e66170; font-weight:bold; '>using</span> System<span style='color:#b060b0; '>;</span>
+<span style='color:#e66170; font-weight:bold; '>using</span> System<span style='color:#d2cd86; '>.</span>Collections<span style='color:#d2cd86; '>.</span>Generic<span style='color:#b060b0; '>;</span>
+<span style='color:#e66170; font-weight:bold; '>using</span> System<span style='color:#d2cd86; '>.</span>IO<span style='color:#b060b0; '>;</span>
+
+<span style='color:#e66170; font-weight:bold; '>namespace</span> CMBS_Demo
+<span style='color:#b060b0; '>{</span>
+	<span style='color:#e66170; font-weight:bold; '>class</span> Program
+	<span style='color:#b060b0; '>{</span>
+		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> TRUSTEE_WEBSITE_URL <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>https://datafeeds.moodysanalytics.com/CTSLink.html</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
+		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> TEMPORARY_DOWNLOAD_FOLDER <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Reports</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
+		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> DB_CONNECTION_STRING <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Server=.;Integrated Security=true;Database=CMBS;</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
+
+		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> <span style='color:#e66170; font-weight:bold; '>void</span> Main<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>[</span><span style='color:#d2cd86; '>]</span> args<span style='color:#d2cd86; '>)</span>
+		<span style='color:#b060b0; '>{</span>
+			<span style='color:#e66170; font-weight:bold; '>try</span>
+			<span style='color:#b060b0; '>{</span>
+				<span style='color:#9999a9; '>//Get list of files available</span>
+				List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundFiles <span style='color:#d2cd86; '>=</span> CrawlWebsite<span style='color:#d2cd86; '>(</span>TRUSTEE_WEBSITE_URL<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+				<span style='color:#9999a9; '>//Create temporary folder to download files</span>
+				Directory<span style='color:#d2cd86; '>.</span>CreateDirectory<span style='color:#d2cd86; '>(</span>TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+				<span style='color:#9999a9; '>//Download files to a temporary location</span>
+				List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> temporaryReportPaths <span style='color:#d2cd86; '>=</span> DownloadReports<span style='color:#d2cd86; '>(</span>foundFiles<span style='color:#d2cd86; '>,</span> TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+				<span style='color:#9999a9; '>//Load reports to database</span>
+				UploadDataToDB<span style='color:#d2cd86; '>(</span>temporaryReportPaths<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+			<span style='color:#b060b0; '>}</span>
+			<span style='color:#e66170; font-weight:bold; '>catch</span><span style='color:#d2cd86; '>(</span>Exception ex<span style='color:#d2cd86; '>)</span>
+			<span style='color:#b060b0; '>{</span>
+				<span style='color:#9999a9; '>//Print the error to the console</span>
+				Console<span style='color:#d2cd86; '>.</span>WriteLine<span style='color:#d2cd86; '>(</span>ex<span style='color:#d2cd86; '>.</span>ToString<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+			<span style='color:#b060b0; '>}</span>
+			<span style='color:#e66170; font-weight:bold; '>finally</span>
+			<span style='color:#b060b0; '>{</span>
+				<span style='color:#9999a9; '>//Cleanup temporary reports</span>
+				Directory<span style='color:#d2cd86; '>.</span>Delete<span style='color:#d2cd86; '>(</span>TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>,</span> <span style='color:#e66170; font-weight:bold; '>true</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+			<span style='color:#b060b0; '>}</span>
+
+			Console<span style='color:#d2cd86; '>.</span>WriteLine<span style='color:#d2cd86; '>(</span><span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Press enter to exit</span><span style='color:#02d045; '>"</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+			Console<span style='color:#d2cd86; '>.</span>Read<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+		<span style='color:#b060b0; '>}</span>
+
+		<span style='color:#9999a9; '>/// &lt;summary></span>
+		<span style='color:#9999a9; '>/// Crawls a web page and finds reports that can be downloaded</span>
+		<span style='color:#9999a9; '>/// &lt;/summary></span>
+		<span style='color:#9999a9; '>/// &lt;param name="websiteUrl">Web page that will be crawled&lt;/param></span>
+		<span style='color:#9999a9; '>/// &lt;returns>A list of Trustee File records pointing to available reports for download&lt;/returns></span>
+		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> CrawlWebsite<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>string</span> websiteUrl<span style='color:#d2cd86; '>)</span>
+		<span style='color:#b060b0; '>{</span>
+			<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
+			<span style='color:#e66170; font-weight:bold; '>return</span> <span style='color:#e66170; font-weight:bold; '>null</span><span style='color:#b060b0; '>;</span>
+		<span style='color:#b060b0; '>}</span>
+
+		<span style='color:#9999a9; '>/// &lt;summary></span>
+		<span style='color:#9999a9; '>/// Downloads trustee reports to local machine</span>
+		<span style='color:#9999a9; '>/// &lt;/summary></span>
+		<span style='color:#9999a9; '>/// &lt;param name="foundFiles">List of files that should be downloaded&lt;/param></span>
+		<span style='color:#9999a9; '>/// &lt;param name="temporaryFolder">Location to temporarily store downloaded files&lt;/param></span>
+		<span style='color:#9999a9; '>/// &lt;returns>Paths to downloaded reports&lt;/returns></span>
+		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> DownloadReports<span style='color:#d2cd86; '>(</span>List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundFiles<span style='color:#d2cd86; '>,</span> <span style='color:#e66170; font-weight:bold; '>string</span> temporaryFolder<span style='color:#d2cd86; '>)</span>
+		<span style='color:#b060b0; '>{</span>
+			<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
+			<span style='color:#e66170; font-weight:bold; '>return</span> <span style='color:#e66170; font-weight:bold; '>null</span><span style='color:#b060b0; '>;</span>
+		<span style='color:#b060b0; '>}</span>
+
+		<span style='color:#9999a9; '>/// &lt;summary></span>
+		<span style='color:#9999a9; '>/// Processes reports and loads the data into the database</span>
+		<span style='color:#9999a9; '>/// &lt;/summary></span>
+		<span style='color:#9999a9; '>/// &lt;param name="temporaryReportPaths">Paths to reports that should be loaded&lt;/param></span>
+		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> <span style='color:#e66170; font-weight:bold; '>void</span> UploadDataToDB<span style='color:#d2cd86; '>(</span>List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> temporaryReportPaths<span style='color:#d2cd86; '>)</span>
+		<span style='color:#b060b0; '>{</span>
+			<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
+		<span style='color:#b060b0; '>}</span>
+	<span style='color:#b060b0; '>}</span>
+
+	<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>struct</span> TrusteeReport
+	<span style='color:#b060b0; '>{</span>
+		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>string</span> DealName<span style='color:#b060b0; '>;</span>
+		<span style='color:#e66170; font-weight:bold; '>public</span> DateTime FileDate<span style='color:#b060b0; '>;</span>
+		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>string</span> FileUrl<span style='color:#b060b0; '>;</span>
+	<span style='color:#b060b0; '>}</span>
+<span style='color:#b060b0; '>}</span>
+</pre>
+	</div>
+ </div>
+ 
+  <div class="w3-content w3-justify w3-text-grey w3-padding-64" id="crawler">
+    <h2 class="w3-text-light-grey">Crawler</h2>
+    <hr style="width:200px" class="w3-opacity">
+    <p>First thing's first. We need to get the data from the Trustee's website. Unless the website provides some sort of API that allows us to directly access the data we're interested in, we have to simulate a user browsing the website and download the data ourselves.
+    </p>
+	<p>We will be analyzing the JP Morgan Chase 2013 - C17 Deal as shown on it's original Trustee Website, CTSLink, below:
+    </p>
+	<img src="assets/CTSLink.jpg" alt="cts" class="w3-image">
+	<h2 class="w3-text-light-grey" style="margin-top:30px;">Getting HTML</h2>
+	<p>For convinience we will be crawling a clone of the Loan Performance report history page: 
+    </p>
+ </div>
+ 
+<div class="w3-content w3-justify w3-text-grey w3-padding-64" id="skills">
+    <h3 class="w3-padding-16 w3-text-light-grey">My Skills</h3>
+    <p class="w3-wide">Photography</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:95%"></div>
+    </div>
+    <p class="w3-wide">Web Design</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:85%"></div>
+    </div>
+    <p class="w3-wide">Photoshop</p>
+    <div class="w3-white">
+      <div class="w3-dark-grey" style="height:28px;width:80%"></div>
+    </div><br>
+    
+    <div class="w3-row w3-center w3-padding-16 w3-section w3-light-grey">
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">11+</span><br>
+        Partners
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">55+</span><br>
+        Projects Done
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">89+</span><br>
+        Happy Clients
+      </div>
+      <div class="w3-quarter w3-section">
+        <span class="w3-xlarge">150+</span><br>
+        Meetings
+      </div>
+    </div>
+
+    <button class="w3-button w3-light-grey w3-padding-large w3-section">
+      <i class="fa fa-download"></i> Download Resume
+    </button>
+    
+    <!-- Grid for pricing tables -->
+    <h3 class="w3-padding-16 w3-text-light-grey">My Price</h3>
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half w3-margin-bottom">
+        <ul class="w3-ul w3-white w3-center w3-opacity w3-hover-opacity-off">
+          <li class="w3-dark-grey w3-xlarge w3-padding-32">Basic</li>
+          <li class="w3-padding-16">Web Design</li>
+          <li class="w3-padding-16">Photography</li>
+          <li class="w3-padding-16">5GB Storage</li>
+          <li class="w3-padding-16">Mail Support</li>
+          <li class="w3-padding-16">
+            <h2>$ 10</h2>
+            <span class="w3-opacity">per month</span>
+          </li>
+          <li class="w3-light-grey w3-padding-24">
+            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="w3-half">
+        <ul class="w3-ul w3-white w3-center w3-opacity w3-hover-opacity-off">
+          <li class="w3-dark-grey w3-xlarge w3-padding-32">Pro</li>
+          <li class="w3-padding-16">Web Design</li>
+          <li class="w3-padding-16">Photography</li>
+          <li class="w3-padding-16">50GB Storage</li>
+          <li class="w3-padding-16">Endless Support</li>
+          <li class="w3-padding-16">
+            <h2>$ 25</h2>
+            <span class="w3-opacity">per month</span>
+          </li>
+          <li class="w3-light-grey w3-padding-24">
+            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
+          </li>
+        </ul>
+      </div>
+    <!-- End Grid/Pricing tables -->
+    </div>
+    
+    <!-- Testimonials -->
+    <h3 class="w3-padding-24 w3-text-light-grey">My Reputation</h3>  
+    <img src="/w3images/bandmember.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Chris Fox.</span> CEO at Mighty Schools.</p>
+    <p>Jane Doe saved us from a web disaster.</p><br>
+    
+    <img src="/w3images/avatar_g2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
+    <p><span class="w3-large w3-margin-right">Rebecca Flex.</span> CEO at Company.</p>
+    <p>No one is better than Jane Doe.</p>
+  <!-- End About Section -->
+  </div>
+  
+  <!-- Portfolio Section -->
+  <div class="w3-padding-64 w3-content" id="photos">
+    <h2 class="w3-text-light-grey">My Photos</h2>
+    <hr style="width:200px" class="w3-opacity">
+
+    <!-- Grid for photos -->
+    <div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+        <img src="/w3images/wedding.jpg" style="width:100%">
+        <img src="/w3images/rocks.jpg" style="width:100%">
+        <img src="/w3images/sailboat.jpg" style="width:100%">
+      </div>
+
+      <div class="w3-half">
+        <img src="/w3images/underwater.jpg" style="width:100%">
+        <img src="/w3images/chef.jpg" style="width:100%">
+        <img src="/w3images/wedding.jpg" style="width:100%">
+        <img src="/w3images/p6.jpg" style="width:100%">
+      </div>
+    <!-- End photo grid -->
+    </div>
+  <!-- End Portfolio Section -->
+  </div>
+
+  <!-- Contact Section -->
+  <div class="w3-padding-64 w3-content w3-text-grey" id="contact">
+    <h2 class="w3-text-light-grey">Contact Me</h2>
+    <hr style="width:200px" class="w3-opacity">
+
+    <div class="w3-section">
+      <p><i class="fa fa-map-marker fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Chicago, US</p>
+      <p><i class="fa fa-phone fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Phone: +00 151515</p>
+      <p><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Email: mail@mail.com</p>
+    </div><br>
+    <p>Lets get in touch. Send me a message:</p>
+
+    <form action="/action_page.php" target="_blank">
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Name" required name="Name"></p>
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Email" required name="Email"></p>
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Subject" required name="Subject"></p>
+      <p><input class="w3-input w3-padding-16" type="text" placeholder="Message" required name="Message"></p>
+      <p>
+        <button class="w3-button w3-light-grey w3-padding-large" type="submit">
+          <i class="fa fa-paper-plane"></i> SEND MESSAGE
+        </button>
+      </p>
+    </form>
+  <!-- End Contact Section -->
+  </div>
+  
+    <!-- Footer -->
+  <footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge">
+    <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-snapchat w3-hover-opacity"></i>
+    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <i class="fa fa-linkedin w3-hover-opacity"></i>
+    <p class="w3-medium">Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
+  <!-- End footer -->
+  </footer>
+
+<!-- END PAGE CONTENT -->
+</div>
+
+</body>
+</html>
