@@ -26,6 +26,7 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
+.info { border:1px solid gold; border-radius:24px; font-size:14px; padding: 12px 0 0 12px;color:#FEFEFE;line-height:24px;margin-top:36px;} .info>i {font-size:16px;color:gold;}	.info>p{margin:0;}
 </style>
 <script>
 function selectText(element) {
@@ -55,9 +56,9 @@ function selectText(element) {
     <i class="fa fa-internet-explorer w3-xxlarge"></i>
     <p>CRAWLER</p>
   </a>
-  <a href="#photos" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
-    <i class="fa fa-eye w3-xxlarge"></i>
-    <p>PHOTOS</p>
+  <a href="#parser" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
+    <i class="fa fa-file-archive-o w3-xxlarge"></i>
+    <p>PARSER</p>
   </a>
   <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hover-black">
     <i class="fa fa-envelope w3-xxlarge"></i>
@@ -70,7 +71,7 @@ function selectText(element) {
   <div class="w3-bar w3-black w3-opacity w3-hover-opacity-off w3-center w3-small">
     <a href="#intro" class="w3-bar-item w3-button" style="width:25% !important">INTRO</a>
     <a href="#crawler" class="w3-bar-item w3-button" style="width:25% !important">CRAWLER</a>
-    <a href="#photos" class="w3-bar-item w3-button" style="width:25% !important">PHOTOS</a>
+    <a href="#parser" class="w3-bar-item w3-button" style="width:25% !important">PHOTOS</a>
     <a href="#contact" class="w3-bar-item w3-button" style="width:25% !important">CONTACT</a>
   </div>
 </div>
@@ -93,8 +94,18 @@ function selectText(element) {
 	<img src="assets/flow_main.png" alt="flow_main" class="w3-image img-center" style="margin:50px auto;">
 	<h3 class="w3-padding-16 w3-text-light-grey">Setup</h3>
 	<p>We will be using C# as our programming language and Microsoft SQL Server as our database to achieve the workflow shown above. To get started make sure your local Sql Server instance is running: Win+R -> Type: "services.msc" & Hit Enter -> Find "Sql Server" and make sure it's running.
+	Also make sure you have SQL Server Management Studio Installed and that you can connect to your local SQL Server instance (Server name: localhost, Authentication: Windows)
     </p>
-	<p>Next open Visual Studio and create a new Console Application project. Let's name it "CMBS_Demo"
+	<div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+        <img src="assets/sqlservice.jpg" style="width:100%">
+	  </div>
+	  <div class="w3-half">
+	   <img src="assets/sqllogin.jpg" style="width:100%">
+	  </div>
+  </div>
+  <p style="font-size:10px;font-style:italic;">SQL Server Management studio can typically be found here: C:\Program Files (x86)\Microsoft SQL Server\xxx\Tools\Binn\ManagementStudio\SSMS.exe (Where xxx is your version number)</p>
+	<p>Next open Visual Studio and create a new Console Application project. Let's name it "CMBS_Crawler"
     </p>
 	<div class="w3-row-padding" style="margin:0 -16px">
       <div class="w3-half">
@@ -111,84 +122,64 @@ function selectText(element) {
 <span style='color:#e66170; font-weight:bold; '>using</span> System<span style='color:#d2cd86; '>.</span>Collections<span style='color:#d2cd86; '>.</span>Generic<span style='color:#b060b0; '>;</span>
 <span style='color:#e66170; font-weight:bold; '>using</span> System<span style='color:#d2cd86; '>.</span>IO<span style='color:#b060b0; '>;</span>
 
-<span style='color:#e66170; font-weight:bold; '>namespace</span> CMBS_Demo
+<span style='color:#e66170; font-weight:bold; '>namespace</span> CMBS_Crawler
 <span style='color:#b060b0; '>{</span>
-	<span style='color:#e66170; font-weight:bold; '>class</span> Program
-	<span style='color:#b060b0; '>{</span>
-		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> TRUSTEE_WEBSITE_URL <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>https://datafeeds.moodysanalytics.com/CTSLink.html</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
-		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> TEMPORARY_DOWNLOAD_FOLDER <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Reports</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
-		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> DB_CONNECTION_STRING <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Server=.;Integrated Security=true;Database=CMBS;</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
+    <span style='color:#e66170; font-weight:bold; '>class</span> Program
+    <span style='color:#b060b0; '>{</span>
+        <span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> TRUSTEE_WEBSITE_URL <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>https://mukunku.github.io/CTSLink.html</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
+        <span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>const</span> <span style='color:#e66170; font-weight:bold; '>string</span> TEMPORARY_DOWNLOAD_FOLDER <span style='color:#d2cd86; '>=</span> <span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Reports</span><span style='color:#02d045; '>"</span><span style='color:#b060b0; '>;</span>
 
-		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> <span style='color:#e66170; font-weight:bold; '>void</span> Main<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>[</span><span style='color:#d2cd86; '>]</span> args<span style='color:#d2cd86; '>)</span>
-		<span style='color:#b060b0; '>{</span>
-			<span style='color:#e66170; font-weight:bold; '>try</span>
-			<span style='color:#b060b0; '>{</span>
-				<span style='color:#9999a9; '>//Get list of files available</span>
-				List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundFiles <span style='color:#d2cd86; '>=</span> CrawlWebsite<span style='color:#d2cd86; '>(</span>TRUSTEE_WEBSITE_URL<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+        <span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> <span style='color:#e66170; font-weight:bold; '>void</span> Main<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>[</span><span style='color:#d2cd86; '>]</span> args<span style='color:#d2cd86; '>)</span>
+        <span style='color:#b060b0; '>{</span>
+            <span style='color:#e66170; font-weight:bold; '>try</span>
+            <span style='color:#b060b0; '>{</span>
+                <span style='color:#9999a9; '>//Get list of files available</span>
+                List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundFiles <span style='color:#d2cd86; '>=</span> CrawlWebsite<span style='color:#d2cd86; '>(</span>TRUSTEE_WEBSITE_URL<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
 
-				<span style='color:#9999a9; '>//Create temporary folder to download files</span>
-				Directory<span style='color:#d2cd86; '>.</span>CreateDirectory<span style='color:#d2cd86; '>(</span>TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+                <span style='color:#9999a9; '>//Create temporary folder to download files</span>
+                Directory<span style='color:#d2cd86; '>.</span>CreateDirectory<span style='color:#d2cd86; '>(</span>TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
 
-				<span style='color:#9999a9; '>//Download files to a temporary location</span>
-				List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> temporaryReportPaths <span style='color:#d2cd86; '>=</span> DownloadReports<span style='color:#d2cd86; '>(</span>foundFiles<span style='color:#d2cd86; '>,</span> TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+                <span style='color:#9999a9; '>//Download files to a temporary location</span>
+                DownloadReports<span style='color:#d2cd86; '>(</span>foundFiles<span style='color:#d2cd86; '>,</span> TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+            <span style='color:#b060b0; '>}</span>
+            <span style='color:#e66170; font-weight:bold; '>catch</span> <span style='color:#d2cd86; '>(</span>Exception ex<span style='color:#d2cd86; '>)</span>
+            <span style='color:#b060b0; '>{</span>
+                <span style='color:#9999a9; '>//Print the error to the console</span>
+                Console<span style='color:#d2cd86; '>.</span>WriteLine<span style='color:#d2cd86; '>(</span>ex<span style='color:#d2cd86; '>.</span>ToString<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+            <span style='color:#b060b0; '>}</span>
 
-				<span style='color:#9999a9; '>//Load reports to database</span>
-				UploadDataToDB<span style='color:#d2cd86; '>(</span>temporaryReportPaths<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
-			<span style='color:#b060b0; '>}</span>
-			<span style='color:#e66170; font-weight:bold; '>catch</span><span style='color:#d2cd86; '>(</span>Exception ex<span style='color:#d2cd86; '>)</span>
-			<span style='color:#b060b0; '>{</span>
-				<span style='color:#9999a9; '>//Print the error to the console</span>
-				Console<span style='color:#d2cd86; '>.</span>WriteLine<span style='color:#d2cd86; '>(</span>ex<span style='color:#d2cd86; '>.</span>ToString<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
-			<span style='color:#b060b0; '>}</span>
-			<span style='color:#e66170; font-weight:bold; '>finally</span>
-			<span style='color:#b060b0; '>{</span>
-				<span style='color:#9999a9; '>//Cleanup temporary reports</span>
-				Directory<span style='color:#d2cd86; '>.</span>Delete<span style='color:#d2cd86; '>(</span>TEMPORARY_DOWNLOAD_FOLDER<span style='color:#d2cd86; '>,</span> <span style='color:#e66170; font-weight:bold; '>true</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
-			<span style='color:#b060b0; '>}</span>
+            Console<span style='color:#d2cd86; '>.</span>WriteLine<span style='color:#d2cd86; '>(</span><span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Press enter to exit</span><span style='color:#02d045; '>"</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+            Console<span style='color:#d2cd86; '>.</span>Read<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+        <span style='color:#b060b0; '>}</span>
 
-			Console<span style='color:#d2cd86; '>.</span>WriteLine<span style='color:#d2cd86; '>(</span><span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Press enter to exit</span><span style='color:#02d045; '>"</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
-			Console<span style='color:#d2cd86; '>.</span>Read<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
-		<span style='color:#b060b0; '>}</span>
+        <span style='color:#9999a9; '>/// &lt;summary></span>
+        <span style='color:#9999a9; '>/// Crawls a web page and finds reports that can be downloaded</span>
+        <span style='color:#9999a9; '>/// &lt;/summary></span>
+        <span style='color:#9999a9; '>/// &lt;param name="websiteUrl">Web page that will be crawled&lt;/param></span>
+        <span style='color:#9999a9; '>/// &lt;returns>A list of Trustee File records pointing to available reports for download&lt;/returns></span>
+        <span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> CrawlWebsite<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>string</span> websiteUrl<span style='color:#d2cd86; '>)</span>
+        <span style='color:#b060b0; '>{</span>
+            <span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
+            <span style='color:#e66170; font-weight:bold; '>return</span> <span style='color:#e66170; font-weight:bold; '>null</span><span style='color:#b060b0; '>;</span>
+        <span style='color:#b060b0; '>}</span>
 
-		<span style='color:#9999a9; '>/// &lt;summary></span>
-		<span style='color:#9999a9; '>/// Crawls a web page and finds reports that can be downloaded</span>
-		<span style='color:#9999a9; '>/// &lt;/summary></span>
-		<span style='color:#9999a9; '>/// &lt;param name="websiteUrl">Web page that will be crawled&lt;/param></span>
-		<span style='color:#9999a9; '>/// &lt;returns>A list of Trustee File records pointing to available reports for download&lt;/returns></span>
-		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> CrawlWebsite<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>string</span> websiteUrl<span style='color:#d2cd86; '>)</span>
-		<span style='color:#b060b0; '>{</span>
-			<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
-			<span style='color:#e66170; font-weight:bold; '>return</span> <span style='color:#e66170; font-weight:bold; '>null</span><span style='color:#b060b0; '>;</span>
-		<span style='color:#b060b0; '>}</span>
+        <span style='color:#9999a9; '>/// &lt;summary></span>
+        <span style='color:#9999a9; '>/// Downloads trustee reports to local machine</span>
+        <span style='color:#9999a9; '>/// &lt;/summary></span>
+        <span style='color:#9999a9; '>/// &lt;param name="foundFiles">List of files that should be downloaded&lt;/param></span>
+        <span style='color:#9999a9; '>/// &lt;param name="temporaryFolder">Location to temporarily store downloaded files&lt;/param></span>
+        <span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> <span style='color:#e66170; font-weight:bold; '>void</span> DownloadReports<span style='color:#d2cd86; '>(</span>List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundFiles<span style='color:#d2cd86; '>,</span> <span style='color:#e66170; font-weight:bold; '>string</span> temporaryFolder<span style='color:#d2cd86; '>)</span>
+        <span style='color:#b060b0; '>{</span>
+            <span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
+        <span style='color:#b060b0; '>}</span>
 
-		<span style='color:#9999a9; '>/// &lt;summary></span>
-		<span style='color:#9999a9; '>/// Downloads trustee reports to local machine</span>
-		<span style='color:#9999a9; '>/// &lt;/summary></span>
-		<span style='color:#9999a9; '>/// &lt;param name="foundFiles">List of files that should be downloaded&lt;/param></span>
-		<span style='color:#9999a9; '>/// &lt;param name="temporaryFolder">Location to temporarily store downloaded files&lt;/param></span>
-		<span style='color:#9999a9; '>/// &lt;returns>Paths to downloaded reports&lt;/returns></span>
-		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> DownloadReports<span style='color:#d2cd86; '>(</span>List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundFiles<span style='color:#d2cd86; '>,</span> <span style='color:#e66170; font-weight:bold; '>string</span> temporaryFolder<span style='color:#d2cd86; '>)</span>
-		<span style='color:#b060b0; '>{</span>
-			<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
-			<span style='color:#e66170; font-weight:bold; '>return</span> <span style='color:#e66170; font-weight:bold; '>null</span><span style='color:#b060b0; '>;</span>
-		<span style='color:#b060b0; '>}</span>
-
-		<span style='color:#9999a9; '>/// &lt;summary></span>
-		<span style='color:#9999a9; '>/// Processes reports and loads the data into the database</span>
-		<span style='color:#9999a9; '>/// &lt;/summary></span>
-		<span style='color:#9999a9; '>/// &lt;param name="temporaryReportPaths">Paths to reports that should be loaded&lt;/param></span>
-		<span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> <span style='color:#e66170; font-weight:bold; '>void</span> UploadDataToDB<span style='color:#d2cd86; '>(</span>List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> temporaryReportPaths<span style='color:#d2cd86; '>)</span>
-		<span style='color:#b060b0; '>{</span>
-			<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO</span>
-		<span style='color:#b060b0; '>}</span>
-	<span style='color:#b060b0; '>}</span>
-
-	<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>struct</span> TrusteeReport
-	<span style='color:#b060b0; '>{</span>
-		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>string</span> DealName<span style='color:#b060b0; '>;</span>
-		<span style='color:#e66170; font-weight:bold; '>public</span> DateTime FileDate<span style='color:#b060b0; '>;</span>
-		<span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>string</span> FileUrl<span style='color:#b060b0; '>;</span>
-	<span style='color:#b060b0; '>}</span>
+        <span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>struct</span> TrusteeReport
+        <span style='color:#b060b0; '>{</span>
+            <span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>string</span> DealName<span style='color:#b060b0; '>;</span>
+            <span style='color:#e66170; font-weight:bold; '>public</span> DateTime FileDate<span style='color:#b060b0; '>;</span>
+            <span style='color:#e66170; font-weight:bold; '>public</span> <span style='color:#e66170; font-weight:bold; '>string</span> FileUrl<span style='color:#b060b0; '>;</span>
+        <span style='color:#b060b0; '>}</span>
+    <span style='color:#b060b0; '>}</span>
 <span style='color:#b060b0; '>}</span>
 </pre>
 	</div>
@@ -202,161 +193,117 @@ function selectText(element) {
 	<p>We will be analyzing the JP Morgan Chase 2013 - C17 Deal as shown on it's original Trustee Website, CTSLink, below:
     </p>
 	<img src="assets/CTSLink.jpg" alt="cts" class="w3-image">
-	<h2 class="w3-text-light-grey" style="margin-top:30px;">Getting HTML</h2>
-	<p>For convinience we will be crawling a clone of the Loan Performance report history page: 
-    </p>
+	<h3 class="w3-text-light-grey" style="margin-top:30px;">Installing HTML Agility Pack via NuGet</h3>
+	<p>Right click your project and go to "Manage Nuget Packages...". From here go ahead and search for the HTML Agility Pack and install it.</p>
+	<div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+        <img src="assets/managenuget.jpg" style="width:100%">
+		</div>
+		 <div class="w3-half">
+        <img src="assets/htmlagility.jpg" style="width:100%">
+      </div>
+	</div>
+	<p>You should see HtmlAgilityPack in your project references:</p>
+	<div class="w3-row-padding" style="margin:0 -16px">
+      <div class="w3-half">
+		<img src="assets/htmlagilityresource.jpg" style="width:100%">
+	  </div>
+	</div>
+	<div class="info">
+		<i class="fa fa-lightbulb-o w3-left w3-circle w3-margin-right"> Did you know?</i><br>
+		<p>NuGet is Visual Studio's package manager for loading and managing external libraries<br>
+		Python equivalent: pip <br>
+		Java equivalent: Maven</p><br>
+	</div>
+	<h3 class="w3-text-light-grey" style="margin-top:30px;">Scraping HTML</h3>
+	<p>For convinience we will be crawling a clone of the Loan Performance report history page: <a href="https://mukunku.github.io/CTSLink.html">https://mukunku.github.io/CTSLink.html</a></p>
+	<p>Copy the following code into the <span style="color:white;">CrawlWebsite()</span> method to get you started:</p>
+	<div class="code-block" onclick="selectText(this)">
+<pre style='color:#d1d1d1;background:#000000;'><span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> CrawlWebsite<span style='color:#d2cd86; '>(</span><span style='color:#e66170; font-weight:bold; '>string</span> websiteUrl<span style='color:#d2cd86; '>)</span>
+<span style='color:#b060b0; '>{</span>
+	System<span style='color:#d2cd86; '>.</span>Net<span style='color:#d2cd86; '>.</span>ServicePointManager<span style='color:#d2cd86; '>.</span>SecurityProtocol <span style='color:#d2cd86; '>=</span> System<span style='color:#d2cd86; '>.</span>Net<span style='color:#d2cd86; '>.</span>SecurityProtocolType<span style='color:#d2cd86; '>.</span>Tls12<span style='color:#b060b0; '>;</span> <span style='color:#9999a9; '>//Need this to enable latest SSL technology</span>
+	System<span style='color:#d2cd86; '>.</span>Net<span style='color:#d2cd86; '>.</span>WebRequest request <span style='color:#d2cd86; '>=</span> System<span style='color:#d2cd86; '>.</span>Net<span style='color:#d2cd86; '>.</span>WebRequest<span style='color:#d2cd86; '>.</span>Create<span style='color:#d2cd86; '>(</span>websiteUrl<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+	<span style='color:#e66170; font-weight:bold; '>string</span> html <span style='color:#d2cd86; '>=</span> <span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>.</span>Empty<span style='color:#b060b0; '>;</span>
+	<span style='color:#e66170; font-weight:bold; '>using</span> <span style='color:#d2cd86; '>(</span>System<span style='color:#d2cd86; '>.</span>Net<span style='color:#d2cd86; '>.</span>WebResponse response <span style='color:#d2cd86; '>=</span> request<span style='color:#d2cd86; '>.</span>GetResponse<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span>
+	<span style='color:#b060b0; '>{</span>
+		Stream responseStream <span style='color:#d2cd86; '>=</span> response<span style='color:#d2cd86; '>.</span>GetResponseStream<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+		<span style='color:#e66170; font-weight:bold; '>using</span> <span style='color:#d2cd86; '>(</span>StreamReader reader <span style='color:#d2cd86; '>=</span> <span style='color:#e66170; font-weight:bold; '>new</span> StreamReader<span style='color:#d2cd86; '>(</span>responseStream<span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>)</span>
+		<span style='color:#b060b0; '>{</span>
+			html <span style='color:#d2cd86; '>=</span> reader<span style='color:#d2cd86; '>.</span>ReadToEnd<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+		<span style='color:#b060b0; '>}</span>
+	<span style='color:#b060b0; '>}</span>
+
+	<span style='color:#9999a9; '>//Load the HTML into HtmlAgilityPack</span>
+	HtmlAgilityPack<span style='color:#d2cd86; '>.</span>HtmlDocument document <span style='color:#d2cd86; '>=</span> <span style='color:#e66170; font-weight:bold; '>new</span> HtmlAgilityPack<span style='color:#d2cd86; '>.</span>HtmlDocument<span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+	document<span style='color:#d2cd86; '>.</span>LoadHtml<span style='color:#d2cd86; '>(</span>html<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+	<span style='color:#9999a9; '>//Query deal name</span>
+	HtmlAgilityPack<span style='color:#d2cd86; '>.</span>HtmlNode headerNode <span style='color:#d2cd86; '>=</span> document<span style='color:#d2cd86; '>.</span>GetElementbyId<span style='color:#d2cd86; '>(</span><span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>contentBody</span><span style='color:#02d045; '>"</span><span style='color:#d2cd86; '>)</span><span style='color:#d2cd86; '>.</span>ChildNodes<span style='color:#d2cd86; '>.</span>FindFirst<span style='color:#d2cd86; '>(</span><span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>h2</span><span style='color:#02d045; '>"</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+	<span style='color:#e66170; font-weight:bold; '>string</span> dealName <span style='color:#d2cd86; '>=</span> headerNode<span style='color:#d2cd86; '>.</span>InnerHtml<span style='color:#b060b0; '>;</span>
+
+	Console<span style='color:#d2cd86; '>.</span>WriteLine<span style='color:#d2cd86; '>(</span><span style='color:#02d045; '>"</span><span style='color:#00c4c4; '>Gathering reports for deal: </span><span style='color:#02d045; '>"</span> <span style='color:#d2cd86; '>+</span> dealName<span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+	List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundReports <span style='color:#d2cd86; '>=</span> <span style='color:#e66170; font-weight:bold; '>new</span> List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span><span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+	<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO: Find and return all reports with download links</span>
+	<span style='color:#9999a9; '>//Hint: You need to use some XPath</span>
+	<span style='color:#9999a9; '>//Example: HtmlAgilityPack.HtmlNodeCollection checkBoxNodes = document.DocumentNode.SelectNodes("//input[@name='documentChkBx']"); //This will select all input elements with the name 'documentChkBx'</span>
+
+	<span style='color:#e66170; font-weight:bold; '>return</span> foundReports<span style='color:#b060b0; '>;</span>
+<span style='color:#b060b0; '>}</span>
+</pre>
+	</div>
+		<div class="info">
+		<i class="fa fa-lightbulb-o w3-left w3-circle w3-margin-right"> Did you know?</i><br>
+		<p>The "using" clause guarantees managed resource disposal.<br>
+		Python equivalent: "with" statement <br>
+		Java equivalent: "try-with-resources" statement</p><br>
+	</div>
+	<h2 class="w3-padding-16 w3-text-light-grey" style="margin-bottom:0;padding-bottom:0!important;">Assignment 1</h2>
+	<hr style="width:200px" class="w3-opacity">
+	<p>Complete the <span style="color:white;">CrawlWebsite()</span> by adding the logic to locate all the trustee reports and returning them as the method's result. (Aprox. Time 10 min)</p>
+	Solution will be posted <a href="https://mukunku.github.io/Solution1.txt">here</a>
+	<h3 class="w3-padding-16 w3-text-light-grey">Downloading the Reports</h3>
+	<p>Now that we've gathered all the download links, we must download all the files from the website to the local machine. Replace the <span style="color:white;">DownloadReports()</span> method with the code below to get started:</p>
+	<div class="code-block" onclick="selectText(this)">
+	<pre style='color:#d1d1d1;background:#000000;'><span style='color:#e66170; font-weight:bold; '>private</span> <span style='color:#e66170; font-weight:bold; '>static</span> List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> DownloadReports<span style='color:#d2cd86; '>(</span>List<span style='color:#d2cd86; '>&lt;</span>TrusteeReport<span style='color:#d2cd86; '>></span> foundFiles<span style='color:#d2cd86; '>,</span> <span style='color:#e66170; font-weight:bold; '>string</span> temporaryFolder<span style='color:#d2cd86; '>)</span>
+<span style='color:#b060b0; '>{</span>
+	List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span> pathsToDownloadedReports <span style='color:#d2cd86; '>=</span> <span style='color:#e66170; font-weight:bold; '>new</span> List<span style='color:#d2cd86; '>&lt;</span><span style='color:#e66170; font-weight:bold; '>string</span><span style='color:#d2cd86; '>></span><span style='color:#d2cd86; '>(</span><span style='color:#d2cd86; '>)</span><span style='color:#b060b0; '>;</span>
+
+	<span style='color:#e66170; font-weight:bold; '>foreach</span><span style='color:#d2cd86; '>(</span>TrusteeReport report <span style='color:#e66170; font-weight:bold; '>in</span> foundFiles<span style='color:#d2cd86; '>)</span>
+	<span style='color:#b060b0; '>{</span>
+		<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>TODO: Download each file to the temporary folder and add the path to the result</span>
+		<span style='color:#9999a9; '>//</span><span style='color:#ffffff; background:#3c215f; '>Hint: Try searching in Google: "C# How to download file"</span>
+	<span style='color:#b060b0; '>}</span>
+
+	<span style='color:#e66170; font-weight:bold; '>return</span> pathsToDownloadedReports<span style='color:#b060b0; '>;</span>
+<span style='color:#b060b0; '>}</span>
+</pre>	
+	</div>
+	<h2 class="w3-padding-16 w3-text-light-grey" style="margin-bottom:0;padding-bottom:0!important;">Assignment 2</h2>
+	<hr style="width:200px" class="w3-opacity">
+	<p>Complete the <span style="color:white;">DownloadReports()</span> method. (Aprox. Time 10 min)</p>
+	Solution will be posted <a href="https://mukunku.github.io/Solution2.txt">here</a>
+	
+	 <div class="info">
+		<i class="fa fa-question w3-left w3-circle w3-margin-right"> Consider...</i><br>
+		<p>How can we avoid re-downloading the same files everytime?<br>
+		How would you handle revised reports?<br></p><br>
+	</div>
  </div>
- 
-<div class="w3-content w3-justify w3-text-grey w3-padding-64" id="skills">
-    <h3 class="w3-padding-16 w3-text-light-grey">My Skills</h3>
-    <p class="w3-wide">Photography</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:95%"></div>
-    </div>
-    <p class="w3-wide">Web Design</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:85%"></div>
-    </div>
-    <p class="w3-wide">Photoshop</p>
-    <div class="w3-white">
-      <div class="w3-dark-grey" style="height:28px;width:80%"></div>
-    </div><br>
-    
-    <div class="w3-row w3-center w3-padding-16 w3-section w3-light-grey">
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">11+</span><br>
-        Partners
-      </div>
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">55+</span><br>
-        Projects Done
-      </div>
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">89+</span><br>
-        Happy Clients
-      </div>
-      <div class="w3-quarter w3-section">
-        <span class="w3-xlarge">150+</span><br>
-        Meetings
-      </div>
-    </div>
 
-    <button class="w3-button w3-light-grey w3-padding-large w3-section">
-      <i class="fa fa-download"></i> Download Resume
-    </button>
-    
-    <!-- Grid for pricing tables -->
-    <h3 class="w3-padding-16 w3-text-light-grey">My Price</h3>
-    <div class="w3-row-padding" style="margin:0 -16px">
-      <div class="w3-half w3-margin-bottom">
-        <ul class="w3-ul w3-white w3-center w3-opacity w3-hover-opacity-off">
-          <li class="w3-dark-grey w3-xlarge w3-padding-32">Basic</li>
-          <li class="w3-padding-16">Web Design</li>
-          <li class="w3-padding-16">Photography</li>
-          <li class="w3-padding-16">5GB Storage</li>
-          <li class="w3-padding-16">Mail Support</li>
-          <li class="w3-padding-16">
-            <h2>$ 10</h2>
-            <span class="w3-opacity">per month</span>
-          </li>
-          <li class="w3-light-grey w3-padding-24">
-            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
-          </li>
-        </ul>
-      </div>
-
-      <div class="w3-half">
-        <ul class="w3-ul w3-white w3-center w3-opacity w3-hover-opacity-off">
-          <li class="w3-dark-grey w3-xlarge w3-padding-32">Pro</li>
-          <li class="w3-padding-16">Web Design</li>
-          <li class="w3-padding-16">Photography</li>
-          <li class="w3-padding-16">50GB Storage</li>
-          <li class="w3-padding-16">Endless Support</li>
-          <li class="w3-padding-16">
-            <h2>$ 25</h2>
-            <span class="w3-opacity">per month</span>
-          </li>
-          <li class="w3-light-grey w3-padding-24">
-            <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>
-          </li>
-        </ul>
-      </div>
-    <!-- End Grid/Pricing tables -->
-    </div>
-    
-    <!-- Testimonials -->
-    <h3 class="w3-padding-24 w3-text-light-grey">My Reputation</h3>  
-    <img src="/w3images/bandmember.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Chris Fox.</span> CEO at Mighty Schools.</p>
-    <p>Jane Doe saved us from a web disaster.</p><br>
-    
-    <img src="/w3images/avatar_g2.jpg" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:80px">
-    <p><span class="w3-large w3-margin-right">Rebecca Flex.</span> CEO at Company.</p>
-    <p>No one is better than Jane Doe.</p>
-  <!-- End About Section -->
-  </div>
-  
-  <!-- Portfolio Section -->
-  <div class="w3-padding-64 w3-content" id="photos">
-    <h2 class="w3-text-light-grey">My Photos</h2>
+<div class="w3-content w3-justify w3-text-grey w3-padding-64" id="parser">
+    <h2 class="w3-text-light-grey">Parser</h2>
     <hr style="width:200px" class="w3-opacity">
-
-    <!-- Grid for photos -->
-    <div class="w3-row-padding" style="margin:0 -16px">
-      <div class="w3-half">
-        <img src="/w3images/wedding.jpg" style="width:100%">
-        <img src="/w3images/rocks.jpg" style="width:100%">
-        <img src="/w3images/sailboat.jpg" style="width:100%">
-      </div>
-
-      <div class="w3-half">
-        <img src="/w3images/underwater.jpg" style="width:100%">
-        <img src="/w3images/chef.jpg" style="width:100%">
-        <img src="/w3images/wedding.jpg" style="width:100%">
-        <img src="/w3images/p6.jpg" style="width:100%">
-      </div>
-    <!-- End photo grid -->
-    </div>
-  <!-- End Portfolio Section -->
-  </div>
-
-  <!-- Contact Section -->
-  <div class="w3-padding-64 w3-content w3-text-grey" id="contact">
-    <h2 class="w3-text-light-grey">Contact Me</h2>
-    <hr style="width:200px" class="w3-opacity">
-
-    <div class="w3-section">
-      <p><i class="fa fa-map-marker fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Chicago, US</p>
-      <p><i class="fa fa-phone fa-fw w3-text-white w3-xxlarge w3-margin-right"></i> Phone: +00 151515</p>
-      <p><i class="fa fa-envelope fa-fw w3-text-white w3-xxlarge w3-margin-right"> </i> Email: mail@mail.com</p>
-    </div><br>
-    <p>Lets get in touch. Send me a message:</p>
-
-    <form action="/action_page.php" target="_blank">
-      <p><input class="w3-input w3-padding-16" type="text" placeholder="Name" required name="Name"></p>
-      <p><input class="w3-input w3-padding-16" type="text" placeholder="Email" required name="Email"></p>
-      <p><input class="w3-input w3-padding-16" type="text" placeholder="Subject" required name="Subject"></p>
-      <p><input class="w3-input w3-padding-16" type="text" placeholder="Message" required name="Message"></p>
-      <p>
-        <button class="w3-button w3-light-grey w3-padding-large" type="submit">
-          <i class="fa fa-paper-plane"></i> SEND MESSAGE
-        </button>
-      </p>
-    </form>
-  <!-- End Contact Section -->
-  </div>
-  
-    <!-- Footer -->
-  <footer class="w3-content w3-padding-64 w3-text-grey w3-xlarge">
-    <i class="fa fa-facebook-official w3-hover-opacity"></i>
-    <i class="fa fa-instagram w3-hover-opacity"></i>
-    <i class="fa fa-snapchat w3-hover-opacity"></i>
-    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
-    <i class="fa fa-twitter w3-hover-opacity"></i>
-    <i class="fa fa-linkedin w3-hover-opacity"></i>
-    <p class="w3-medium">Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" class="w3-hover-text-green">w3.css</a></p>
-  <!-- End footer -->
-  </footer>
+    <p>We have a way of downloading trustee reports automatically. Now it's time to parse these reports and load them into a database. Let's begin by creating a new Console Application and calling it CMBS_Parser.
+    </p>
+	<p>
+	Create a folder called <span style="color:white;">Reports</span> in your C: drive and put all the reports into it (folder hierarchy doesn't matter). 
+	You may either use your previously downloaded reports or you may download all the reports from here (recommended): <a href="https://mukunku.github.io/Reports.zip">https://mukunku.github.io/Reports.zip</a>
+	</p>
+	
+ </div>
 
 <!-- END PAGE CONTENT -->
 </div>
