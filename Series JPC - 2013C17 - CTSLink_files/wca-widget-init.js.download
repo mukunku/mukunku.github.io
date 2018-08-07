@@ -1,0 +1,48 @@
+'use strict';
+var wcaWidget;
+window.addEventListener("load", function() {
+	var wcaSettings = document.getElementById("wcaSettings");
+	var loginFormError = document.getElementById("loginFormError");
+	wcaWidget = new WCAWidget({
+		appId: wcaSettings.getAttribute("app-id"),
+		brandId: wcaSettings.getAttribute("brand-id"),
+		language: 'en_US',
+		isLoginEmbedded: true,
+		loginErrorContainer: loginFormError,
+		helpURL: wcaSettings.getAttribute("help-url"),
+		targetUrl: wcaSettings.getAttribute("target-url") });
+	var loginButton = document.getElementById("loginButton");
+	if (loginButton) {
+		loginButton.addEventListener("click", function(e) {
+			e.preventDefault();
+			var userId = document.getElementById("user_id").value;
+			var password = document.getElementById("password").value;
+			wcaWidget.authenticateUser({
+				userId: userId,
+				password: password});
+			var user_id_input = document.getElementById("user_id");
+			var password_input = document.getElementById("password");
+			user_id_input.value = "";
+			user_id_input.setAttribute("aria-describedby", "loginFormError");
+			user_id_input.setAttribute("aria-invalid", "true");
+			password_input.value = "";
+			password_input.setAttribute("aria-describedby", "loginFormError");
+			password_input.setAttribute("aria-invalid", "true");
+		});
+		loginButton.disabled = false;
+	}
+	var forgotPasswordLink = document.getElementById("forgotPassword");
+	if (forgotPasswordLink) {
+		forgotPasswordLink.addEventListener("click", function(e) {
+			e.preventDefault();
+			wcaWidget.invokeForgotPasswordFlow();
+		});
+	}
+	var changePasswordLink = document.getElementById("changePasswordLink");
+	if (changePasswordLink) {
+		changePasswordLink.addEventListener("click", function(e) {
+			e.preventDefault();
+			wcaWidget.invokeResetPasswordFlow();
+		});
+	}
+});

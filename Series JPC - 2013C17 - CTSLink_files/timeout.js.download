@@ -1,0 +1,21 @@
+"use strict";
+
+var sessionTimer = setTimeout(expireWarn, 14 * 60000);
+
+function resetTimer() {
+	document.getElementById('expireWarn').style.display = "none";
+	clearTimeout(sessionTimer);
+	sessionTimer = setTimeout(expireWarn, 14 * 60000);
+}
+
+function expireWarn() {
+	document.getElementById('expireWarn').style.display = "block";
+	clearTimeout(sessionTimer);
+	sessionTimer = setTimeout(expirePage, 60000);
+}
+
+function expirePage() {
+	window.location.href = "/a/expire.html";
+}
+
+document.getElementById('expireWarnButton').onclick = resetTimer;

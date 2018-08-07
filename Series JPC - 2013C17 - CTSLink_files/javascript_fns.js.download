@@ -1,0 +1,34 @@
+'use strict';
+
+function cascadeCheckBox(typ) {
+	var bool = document.getElementById(typ).checked;
+	if (document.getElementById(typ+"0")) {
+		document.getElementById(typ+"0").checked = bool;
+	}
+	var i = 1;
+	while (document.getElementById(typ+i)) {
+		document.getElementById(typ+i).checked = bool;
+		i++;
+	}
+}
+
+function cascadeCheckBoxLimit(typ, limit) {
+	var bool = document.getElementById(typ).checked;
+	for (var i = 0; i <= limit; i++) {
+		if (document.getElementById(typ+i)) {
+			document.getElementById(typ+i).checked = bool;
+		}
+	}
+}
+
+function addEvent(obj, evType, fn) { 
+	if (obj.addEventListener) { 
+		obj.addEventListener(evType, fn, false); 
+		return true; 
+	}
+	if (obj.attachEvent) { 
+		var r = obj.attachEvent("on"+evType, fn); 
+		return r; 
+	}
+	return false;
+}

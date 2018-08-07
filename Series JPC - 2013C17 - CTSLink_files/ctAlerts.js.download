@@ -1,0 +1,8 @@
+'use strict';
+
+var alerts = document.getElementsByClassName("alerts");
+
+for (var i=0; i<alerts.length; i++) {
+	var alertText = document.getElementById("alert"+i).innerText;
+	alert(alertText);
+}

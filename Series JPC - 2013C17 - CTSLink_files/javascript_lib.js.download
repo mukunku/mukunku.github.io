@@ -1,0 +1,37 @@
+'use strict';
+
+function openPopUp(url, appID) {
+	var pT = window.screenY + (window.outerHeight / 2) - 300;
+	var pL = window.screenX + (window.outerWidth / 2) - 600;
+	var thisWin = window.open(url, appID, "toolbar=no,location=no,menubar=no,status=no,scrollbars=yes,height=600,width=1200,top="+pT+",left="+pL+",resizable=no");
+	thisWin.opener = null;
+	if (window.focus) {thisWin.focus()}
+	return false;
+}	
+
+//opens up a new window and names it. Then the parent window is named, and the child window is given focus
+function openHelpWindow(url, appID, setParentName)
+{   
+	//(screen.width >= 1024) ?  (WIDTH = 800) : (WIDTH = (screen.width / 1.55));
+	//(screen.height >= 768) ?  (HEIGHT = 400) : (HEIGHT =(screen.height / 2));
+	var WIDTH = 500;
+	var HEIGHT = 450;
+	var thisWin = window.open(url, '13c', 'width=' + WIDTH + ',height=' + HEIGHT + ',top=100,left=200,toolbar=no,status=yes,menubar=no,scrollbars=yes,resizable=yes');
+	thisWin.opener = null;
+}
+
+window.onload = getHelpTopics;
+
+function getHelpTopics(){
+	var links = document.getElementsByTagName("a");
+	for (var i = 0; i < links.length; i++){
+		if (links[i].className=="helpWindow"){
+			links[i].addEventListener("click", addHelpEvent);
+		}
+	}
+}
+
+function addHelpEvent(event){
+	openHelpWindow(event.currentTarget.href, "", "");
+	event.preventDefault();
+}

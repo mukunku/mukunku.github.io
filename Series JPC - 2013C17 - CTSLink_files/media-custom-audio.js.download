@@ -1,0 +1,1 @@
+if(typeof root=="undefined"){root=$("body");}var mediatrack;$(root).find("audio").each(function(){var opt={startLanguage:"en",translations:["es","ar","zh","ru"],translationSelector:true};mediatrack=new mejs.MediaElementPlayer(this,opt);});

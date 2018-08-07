@@ -1,0 +1,17 @@
+'use strict';
+
+var yearSelected = document.getElementsByClassName("yearSelected");
+
+for (var i = 0; i < yearSelected.length; i++){
+	let whichid = yearSelected[i].getAttribute("id");
+	if (document.getElementById(whichid)){
+		document.getElementById(whichid).addEventListener("click", function(){
+			var toggle = document.getElementById(whichid).checked;
+			for (var j = 0; j < 367; j++) { 
+				if (document.getElementById('chk_' + whichid + j)) {
+					document.getElementById('chk_' + whichid + j).checked = toggle;
+				}
+			}
+		});
+	}
+}
