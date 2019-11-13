@@ -1,0 +1,47 @@
+foreach (string fieldRowCell in fieldRow)
+{
+	if (!string.IsNullOrWhiteSpace(fieldRowCell))
+	{
+		if (result.Columns[fieldIndex].DataType == typeof(DateTime))
+		{
+			DateTime value = DateTime.MinValue;
+			Match dateMatch = Regex.Match(fieldRowCell, "(1|2)\\d{7}");
+			if (dateMatch.Success
+				&& DateTime.TryParseExact(dateMatch.Value, "yyyyMMdd", new CultureInfo("en-US"), DateTimeStyles.AssumeLocal, out value))
+			{
+				row[fieldIndex] = value;
+			}
+			else
+				throw new Exception("Invalid DateTime value");
+		}
+		else if (result.Columns[fieldIndex].DataType == typeof(float))
+		{
+			float value = -1;
+			if (float.TryParse(fieldRowCell, out value))
+			{
+				row[fieldIndex] = value;
+			}
+		}
+		else if (result.Columns[fieldIndex].DataType == typeof(float))
+		{
+			int value = -1;
+			if (int.TryParse(fieldRowCell, out value))
+			{
+				row[fieldIndex] = value;
+			}
+		}
+		else if (result.Columns[fieldIndex].DataType == typeof(decimal))
+		{
+			decimal value = -1;
+			if (decimal.TryParse(fieldRowCell, out value))
+			{
+				row[fieldIndex] = value;
+			}
+		}
+		else
+		{
+			row[fieldIndex] = fieldRowCell;
+		}
+	}
+	fieldIndex++;
+}

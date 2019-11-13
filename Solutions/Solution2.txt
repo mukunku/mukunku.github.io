@@ -1,0 +1,11 @@
+foreach (TrusteeReport report in foundFiles)
+{
+	Console.WriteLine("Downloading Report: " + report.FileUrl);
+	using (var client = new System.Net.WebClient())
+	{
+		int slashIndex = report.FileUrl.LastIndexOf("/", report.FileUrl.LastIndexOf("/") - 1);
+		string finalSavePath = temporaryFolder + report.FileUrl.Substring(slashIndex);
+		Directory.CreateDirectory(Path.GetDirectoryName(finalSavePath));
+		client.DownloadFile(report.FileUrl, finalSavePath);
+	}
+}

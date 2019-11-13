@@ -1,0 +1,12 @@
+CREATE VIEW vw_LoanAverageNOI
+AS
+
+SELECT DistributionDate, AVG(MostRecentNOI) AS AverageNOI
+FROM LoanPerformance
+GROUP BY DistributionDate
+
+GO;
+
+SELECT * 
+FROM vw_LoanAverageNOI
+ORDER BY DistributionDate ASC

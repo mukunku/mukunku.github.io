@@ -1,0 +1,14 @@
+HtmlAgilityPack.HtmlNodeCollection checkBoxNodes = document.DocumentNode.SelectNodes("//input[@name='documentChkBx']"); //This will select all input elements with the name 'documentChkBx'
+
+foreach (HtmlAgilityPack.HtmlNode node in checkBoxNodes)
+{
+	HtmlAgilityPack.HtmlNode anchor = node.ParentNode.ChildNodes.FindFirst("a");
+	string downloadUrl = anchor.GetAttributeValue("href", null);
+	Uri websiteUri = new Uri(websiteUrl);
+        downloadUrl = websiteUri.Scheme + "://" + websiteUri.Host + "/" + downloadUrl;
+
+	foundReports.Add(new TrusteeReport() {
+		DealName = dealName,
+		FileUrl = downloadUrl
+	});
+}
